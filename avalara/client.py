@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 import base64
 import os
-from urlparse import urljoin
 
 import requests
+from six.moves.urllib.parse import urljoin
 
 
 DEFAULT_BASE_URL = 'https://development.avalara.net/1.0/'
