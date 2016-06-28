@@ -19,7 +19,7 @@ class Avalara(object):
     @property
     def _auth_token(self):
         return base64.b64encode(
-            ':'.join([self.account_number, self.license_key])
+            ':'.join([self.account_number, self.license_key]).encode('ascii')
         ).decode()
 
     def _make_request(self, method, url, params=None, json=None):
