@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 import base64
 import os
-from urlparse import urljoin
 
 import requests
+from six.moves.urllib.parse import urljoin
 
 
 DEFAULT_BASE_URL = 'https://development.avalara.net/1.0/'
@@ -19,7 +19,7 @@ class Avalara(object):
     @property
     def _auth_token(self):
         return base64.b64encode(
-            ':'.join([self.account_number, self.license_key])
+            ':'.join([self.account_number, self.license_key]).encode('ascii')
         ).decode()
 
     def _make_request(self, method, url, params=None, json=None):
