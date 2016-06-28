@@ -6,14 +6,15 @@ from urlparse import urljoin
 import requests
 
 
+DEFAULT_BASE_URL = 'https://development.avalara.net/1.0/'
+
+
 class Avalara(object):
 
-    #TODO have a switch to a live enviroment when testing is complete
-    BASE_URL = 'https://development.avalara.net/1.0/'
-
-    def __init__(self, account_number=None, license_key=None):
+    def __init__(self, account_number=None, license_key=None, base_url=DEFAULT_BASE_URL):
         self.account_number = account_number or os.getenv('AVALARA_ACCOUNT_NUMBER')
         self.license_key = license_key or os.getenv('AVALARA_LICENSE_KEY')
+        self.base_url = os.getenv('AVALARA_BASE_URL') or base_url
 
     @property
     def _auth_token(self):
@@ -35,7 +36,7 @@ class Avalara(object):
             #TODO build estimate tax url with replacements
             pass
 
-        return urljoin(self.BASE_URL, endpoint)
+        return urljoin(self.base_url, endpoint)
 
     def get_tax(self, get_tax_request):
         url = self._build_url('tax/get')
