@@ -80,6 +80,14 @@ class GetTaxRequest(Avalara):
         url = self._build_url('tax/get')
         return self._make_request('post', url, json=self.get_tax_request)
 
+    def tax_override(self, amount, tax_date, reason='Bydesign Taxes', override_type='TaxAmount'):
+        self.get_tax_request['TaxOverride'] = {
+            "Reason": "Bydesign Taxes",
+            "TaxOverrideType": "TaxAmount",
+            "TaxDate": str(tax_date),
+            "TaxAmount": str(amount),
+        }
+
     def get_tax(self):
         self.get_tax_request['DocType'] = 'SalesOrder'
         self.get_tax_request['Commit'] = 'false'
@@ -95,15 +103,17 @@ class GetTaxRequest(Avalara):
         add all lines for get tax request using this method.  Ensure you create
         address lines and use appropriate address_numbers using the add_address_line method
         """
+        line_number = len(self.get_tax_request['Lines']) + 1
         self.get_tax_request['Lines'].append({
-            'LineNo': len(self.get_tax_request['Lines']) + 1,
+            'LineNo': line_number,
             'TaxCode': tax_code,
             'ItemCode': item_code,
-            'Qty': qty,
-            'Amount': qty * price,
+            'Qty': str(qty),
+            'Amount': str(qty * price),
             'Description': desc[:255],
             'DestinationCode': address_number,
         })
+        return line_number
 
     def add_address_line(self, **kwargs):
         """
