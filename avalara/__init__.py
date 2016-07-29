@@ -1,1 +1,7 @@
-from .client import Avalara
+from .client import Avalara, GetTaxRequest
+
+
+__all__ = [
+    'Avalara',
+    'GetTaxRequest',
+]
