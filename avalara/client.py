@@ -82,8 +82,8 @@ class GetTaxRequest(Avalara):
 
     def tax_override(self, amount, tax_date, reason='Bydesign Taxes', override_type='TaxAmount'):
         self.get_tax_request['TaxOverride'] = {
-            "Reason": "Bydesign Taxes",
-            "TaxOverrideType": "TaxAmount",
+            "Reason": reason,
+            "TaxOverrideType": override_type,
             "TaxDate": str(tax_date),
             "TaxAmount": str(amount),
         }
@@ -98,13 +98,13 @@ class GetTaxRequest(Avalara):
         self.get_tax_request['Commit'] = 'true'
         return self._get_tax()
 
-    def add_line_item(self, address_number, tax_code, item_code, qty, price, desc=''):
+    def add_line_item(self, address_number, tax_code, item_code, qty, price, desc='', override_amount=None, reason='Bydesign Taxes', tax_date=None):
         """
         add all lines for get tax request using this method.  Ensure you create
         address lines and use appropriate address_numbers using the add_address_line method
         """
         line_number = len(self.get_tax_request['Lines']) + 1
-        self.get_tax_request['Lines'].append({
+        line = {
             'LineNo': line_number,
             'TaxCode': tax_code,
             'ItemCode': item_code,
@@ -112,7 +112,19 @@ class GetTaxRequest(Avalara):
             'Amount': str(qty * price),
             'Description': desc[:255],
             'DestinationCode': address_number,
-        })
+        }
+        # override the tax total for the line if args are passed in to do so.
+        # Only override the order total or the line totals.  Not both!!
+        if override_amount:
+            override = {
+                "Reason": reason,
+                "TaxOverrideType": "TaxAmount",
+                "TaxAmount": str(override_amount),
+            }
+        if tax_date:
+            override["TaxDate"] = str(tax_date)
+        line['TaxOverride'] = override
+        self.get_tax_request['Lines'].append(line)
         return line_number
 
     def add_address_line(self, **kwargs):
