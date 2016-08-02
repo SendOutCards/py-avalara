@@ -98,7 +98,7 @@ class GetTaxRequest(Avalara):
         self.get_tax_request['Commit'] = 'true'
         return self._get_tax()
 
-    def add_line_item(self, address_number, tax_code, item_code, qty, price, desc='', override_amount=None, reason='Bydesign Taxes', tax_date=None):
+    def add_line_item(self, address_number, tax_code, item_code, qty, price, desc='', refno=None, override_amount=None, reason='Bydesign Taxes', tax_date=None):
         """
         add all lines for get tax request using this method.  Ensure you create
         address lines and use appropriate address_numbers using the add_address_line method
@@ -112,6 +112,7 @@ class GetTaxRequest(Avalara):
             'Amount': str(qty * price),
             'Description': desc[:255],
             'DestinationCode': address_number,
+            'Ref1': refno,
         }
         # override the tax total for the line if args are passed in to do so.
         # Only override the order total or the line totals.  Not both!!
