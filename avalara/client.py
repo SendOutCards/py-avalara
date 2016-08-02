@@ -121,9 +121,9 @@ class GetTaxRequest(Avalara):
                 "TaxOverrideType": "TaxAmount",
                 "TaxAmount": str(override_amount),
             }
-        if tax_date:
-            override["TaxDate"] = str(tax_date)
-        line['TaxOverride'] = override
+            if tax_date:
+                override["TaxDate"] = str(tax_date)
+            line['TaxOverride'] = override
         self.get_tax_request['Lines'].append(line)
         return line_number
 
