@@ -1,5 +1,8 @@
 from __future__ import unicode_literals
+
 import base64
+import datetime
+from decimal import Decimal, ROUND_HALF_UP
 import os
 
 import requests
@@ -67,21 +70,29 @@ class Avalara(object):
 class GetTaxRequest(Avalara):
     def __init__(self, account_number=None, license_key=None, **kwargs):
         super(GetTaxRequest, self).__init__(account_number=account_number, license_key=license_key, **kwargs)
-        self.get_tax_request = {
+        self.request_body = {
             "CustomerCode": kwargs.get('user_id', 'TEMPCODE'),
-            "CompanyCode": "SOC",
-            "DetailLevel": "Document",
-            "CurrencyCode": "USD",
+            "CompanyCode": kwargs.get('company_code', 'SOC'),
+            "DetailLevel": kwargs.get('detail_level', 'Document'),
+            "CurrencyCode": kwargs.get('currency_code', 'USD'),
             "Addresses": [],
             "Lines": []
         }
+        doc_date = kwargs.get('doc_date')
+        doc_code = kwargs.get('doc_code')
+        if doc_date:
+            assert isinstance(doc_date, datetime.date)
+            self.request_body["DocDate"] = str(doc_date)
+        if doc_code:
+            self.request_body["DocCode"] = doc_code
 
     def _get_tax(self):
         url = self._build_url('tax/get')
-        return self._make_request('post', url, json=self.get_tax_request)
+        return self._make_request('post', url, json=self.request_body)
 
     def tax_override(self, amount, tax_date, reason='Bydesign Taxes', override_type='TaxAmount'):
-        self.get_tax_request['TaxOverride'] = {
+        amount = Decimal(amount).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+        self.request_body['TaxOverride'] = {
             "Reason": reason,
             "TaxOverrideType": override_type,
             "TaxDate": str(tax_date),
@@ -89,13 +100,13 @@ class GetTaxRequest(Avalara):
         }
 
     def get_tax(self):
-        self.get_tax_request['DocType'] = 'SalesOrder'
-        self.get_tax_request['Commit'] = 'false'
+        self.request_body['DocType'] = 'SalesOrder'
+        self.request_body['Commit'] = 'false'
         return self._get_tax()
 
     def commit_tax(self):
-        self.get_tax_request['DocType'] = 'SalesInvoice'
-        self.get_tax_request['Commit'] = 'true'
+        self.request_body['DocType'] = 'SalesInvoice'
+        self.request_body['Commit'] = 'true'
         return self._get_tax()
 
     def add_line_item(self, address_number, tax_code, item_code, qty, price, desc='', refno=None, override_amount=None, reason='Bydesign Taxes', tax_date=None):
@@ -103,20 +114,22 @@ class GetTaxRequest(Avalara):
         add all lines for get tax request using this method.  Ensure you create
         address lines and use appropriate address_numbers using the add_address_line method
         """
-        line_number = len(self.get_tax_request['Lines']) + 1
+        line_number = len(self.request_body['Lines']) + 1
+        amount = Decimal(price).quantize(Decimal('.01'), rounding=ROUND_HALF_UP) * qty
         line = {
             'LineNo': line_number,
             'TaxCode': tax_code,
             'ItemCode': item_code,
             'Qty': str(qty),
-            'Amount': str(qty * price),
+            'Amount': str(amount),
             'Description': desc[:255],
             'DestinationCode': address_number,
             'Ref1': refno,
         }
         # override the tax total for the line if args are passed in to do so.
         # Only override the order total or the line totals.  Not both!!
-        if override_amount:
+        if override_amount is not None:
+            override_amount = Decimal(override_amount).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
             override = {
                 "Reason": reason,
                 "TaxOverrideType": "TaxAmount",
@@ -125,7 +138,7 @@ class GetTaxRequest(Avalara):
             if tax_date:
                 override["TaxDate"] = str(tax_date)
             line['TaxOverride'] = override
-        self.get_tax_request['Lines'].append(line)
+        self.request_body['Lines'].append(line)
         return line_number
 
     def add_address_line(self, **kwargs):
@@ -133,8 +146,8 @@ class GetTaxRequest(Avalara):
         add all address lines here and use the returned address_number when
         creating line items for add_line_item method
         """
-        address_number = len(self.get_tax_request['Addresses']) + 1
-        self.get_tax_request['Addresses'].append({
+        address_number = len(self.request_body['Addresses']) + 1
+        self.request_body['Addresses'].append({
             'AddressCode': address_number,
             'Line1': kwargs.get('address1', ''),
             'Line2': kwargs.get('address2', ''),
