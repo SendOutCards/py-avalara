@@ -1,4 +1,5 @@
-from .client import Avalara, GetTaxRequest
+from .client import Avalara
+from .models import GetTaxRequest
 
 
 __all__ = [
