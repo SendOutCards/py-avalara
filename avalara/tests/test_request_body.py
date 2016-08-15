@@ -62,7 +62,7 @@ OVERRIDE_LOOKUP_2 = {
 }
 
 
-class MyTest(unittest.TestCase):
+class GetTaxRequestTest(unittest.TestCase):
     def test_initial_doc(self):
         # test initial doc
         # create avalara GetTaxRequest object
