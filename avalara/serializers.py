@@ -86,7 +86,7 @@ class OverridenOrderLineSerializer(OrderLineSerializer):
     tax_override = TaxOverrideSerializer(label='TaxOverride')
 
 
-class GetTaxRequestSerializer(Serializer):
+class BaseTaxRequestSerializer(Serializer):
     business_identification_no = NullableStrField(
         label='BusinessIdentificationNo', required=False
     )
@@ -106,8 +106,14 @@ class GetTaxRequestSerializer(Serializer):
     pos_lane_code = NullableStrField(label='PosLaneCode')
     purchase_order_no = NullableStrField(label='PurchaseOrderNo')
     reference_code = NullableStrField(label='ReferenceCode')
-    olines = OrderLineSerializer(label='Lines', many=True,)
-    overridden_olines = OverridenOrderLineSerializer(label='Lines', many=True,)
     addresses = AddressSerializer(label='Addresses', many=True,)
 
+
+class GetTaxRequestSerializer(BaseTaxRequestSerializer):
+    #olines = OrderLineSerializer(label='Lines', many=True,)
+    olines = OverridenOrderLineSerializer(label='Lines', many=True,)
+
+
+class GetTaxRequestOverrideSerializer(BaseTaxRequestSerializer):
+    olines = OverridenOrderLineSerializer(label='Lines', many=True,)
 

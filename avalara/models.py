@@ -182,12 +182,10 @@ class GetTaxRequest(BaseAvalaraModel):
         I can get the two to work together later if this actually turns out to
         be a thing.
         """
-        current_lines = len(self.olines) if not override_lookup else len(self.overridden_olines)
-        kwargs['line_number'] = current_lines + 1
+        kwargs['line_number'] = len(self.olines) + 1
         line = OrderLine(**kwargs)
         if override_lookup:
+            self.serializer = serializers.GetTaxRequestOverrideSerializer
             line._override(**override_lookup)
-            self.overridden_olines.append(line)
-        else:
-            self.olines.append(line)
+        self.olines.append(line)
 

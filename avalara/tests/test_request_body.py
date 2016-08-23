@@ -1,8 +1,11 @@
+from __future__ import unicode_literals
+
 import copy
 import datetime
 import unittest
 
 from ..models import GetTaxRequest
+from .. import serializers
 
 
 AVA_LOOKUP = {
@@ -63,6 +66,8 @@ OVERRIDE_LOOKUP_2 = {
 
 
 class GetTaxRequestTest(unittest.TestCase):
+    maxDiff = None
+
     def test_initial_doc(self):
         # test initial doc
         # create avalara GetTaxRequest object
