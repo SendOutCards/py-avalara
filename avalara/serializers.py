@@ -110,8 +110,7 @@ class BaseTaxRequestSerializer(Serializer):
 
 
 class GetTaxRequestSerializer(BaseTaxRequestSerializer):
-    #olines = OrderLineSerializer(label='Lines', many=True,)
-    olines = OverridenOrderLineSerializer(label='Lines', many=True,)
+    olines = OrderLineSerializer(label='Lines', many=True,)
 
 
 class GetTaxRequestOverrideSerializer(BaseTaxRequestSerializer):
