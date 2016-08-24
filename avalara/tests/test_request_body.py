@@ -9,10 +9,13 @@ from .. import serializers
 
 
 AVA_LOOKUP = {
-    'user_id': 1,
+    'customer_code': 1,
     'doc_date': datetime.date(2016, 5, 5),
     'doc_code': 5,
 }
+
+
+AVA_LOOKUP_2 = {'doc_code': 5,}
 
 
 LINE_LOOKUP_1 = {
@@ -60,7 +63,6 @@ OVERRIDE_LOOKUP_1 = {
 }
 
 OVERRIDE_LOOKUP_2 = {
-    'tax_date': datetime.date(2016, 5, 5),
     'tax_amount': 12.00,
 }
 
@@ -75,10 +77,24 @@ class GetTaxRequestTest(unittest.TestCase):
         initial_request_body = {
             u'CompanyCode': u'SOC',
             u'CurrencyCode': u'USD',
-            u'CustomerCode': u'TEMPCODE',
+            u'CustomerCode': u'1',
             u'DetailLevel': u'Document',
             u'DocCode': u'5',
             u'DocDate': '2016-05-05'
+        }
+        self.assertEqual(initial_request_body, ava.request_body)
+
+    def test_initial_defaults(self):
+        # test initial doc defaults
+        # create avalara GetTaxRequest object
+        ava = GetTaxRequest(**AVA_LOOKUP_2)
+        initial_request_body = {
+            u'CompanyCode': u'SOC',
+            u'CurrencyCode': u'USD',
+            u'CustomerCode': u'TEMPCODE',
+            u'DetailLevel': u'Document',
+            u'DocCode': u'5',
+            u'DocDate': str(datetime.date.today()),
         }
         self.assertEqual(initial_request_body, ava.request_body)
 
@@ -110,7 +126,7 @@ class GetTaxRequestTest(unittest.TestCase):
                 }],
             u'CompanyCode': u'SOC',
             u'CurrencyCode': u'USD',
-            u'CustomerCode': u'TEMPCODE',
+            u'CustomerCode': u'1',
             u'DetailLevel': u'Document',
             u'DocCode': u'5',
             u'DocDate': '2016-05-05'
@@ -152,7 +168,7 @@ class GetTaxRequestTest(unittest.TestCase):
             }],
             u'CompanyCode': u'SOC',
             u'CurrencyCode': u'USD',
-            u'CustomerCode': u'TEMPCODE',
+            u'CustomerCode': u'1',
             u'DetailLevel': u'Document',
             u'DocCode': u'5',
             u'DocDate': '2016-05-05',
@@ -212,7 +228,7 @@ class GetTaxRequestTest(unittest.TestCase):
                 }],
             u'CompanyCode': u'SOC',
             u'CurrencyCode': u'USD',
-            u'CustomerCode': u'TEMPCODE',
+            u'CustomerCode': u'1',
             u'DetailLevel': u'Document',
             u'DocCode': u'5',
             u'DocDate': '2016-05-05',
@@ -243,7 +259,7 @@ class GetTaxRequestTest(unittest.TestCase):
                     u'TaxOverride': {
                         u'Reason': u'Imported From External System',
                         u'TaxAmount': '12.00',
-                        u'TaxDate': '2016-05-05',
+                        u'TaxDate': str(datetime.date.today()),
                         u'TaxOverrideType': u'TaxAmount'
                     }
                 }]}

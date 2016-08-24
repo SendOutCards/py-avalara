@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import datetime
 from decimal import Decimal, ROUND_HALF_UP
 import six
 
@@ -97,6 +98,7 @@ class TaxOverride(BaseAvalaraModel):
     defaults = {
         'reason': 'Imported From External System',
         'tax_override_type': 'TaxAmount',
+        'tax_date': datetime.date.today(),
     }
 
 
@@ -159,6 +161,7 @@ class GetTaxRequest(BaseAvalaraModel):
         'company_code': 'SOC',
         'customer_code': 'TEMPCODE',
         'currency_code': 'USD',
+        'doc_date': datetime.date.today(),
     }
 
     def add_address(self, **kwargs):
