@@ -36,6 +36,15 @@ LINE_LOOKUP_2 = {
     'description': 'some other description',
 }
 
+LINE_LOOKUP_3 = {
+    # line with 0 amount to test non taxable (NT) code
+    'item_code': '1258',
+    'tax_code': '42',
+    'qty': 5,
+    'amount': 0.00,
+    'description': 'and another',
+}
+
 ORIGIN_ADDRESS_LOOKUP = {
     'address1': '123 some street name',
     'address2': 'and another',
@@ -133,7 +142,7 @@ class GetTaxRequestTest(unittest.TestCase):
         }
         self.assertEqual(address_request, ava.request_body)
 
-    def add_line_item(self):
+    def test_add_line_item(self):
         # test doc with address and lines
         ava = GetTaxRequest(**AVA_LOOKUP)
         origin_code = ava.add_address(**ORIGIN_ADDRESS_LOOKUP)
@@ -147,6 +156,11 @@ class GetTaxRequestTest(unittest.TestCase):
         line_lookup_2['destination_code'] = destination_code
         line_lookup_2['origin_code'] = origin_code
         ava.add_line(**line_lookup_2)
+        # and one more!!
+        line_lookup_3 = copy.deepcopy(LINE_LOOKUP_3)
+        line_lookup_3['destination_code'] = destination_code
+        line_lookup_3['origin_code'] = origin_code
+        ava.add_line(**line_lookup_3)
         line_items_request_body = {
             u'Addresses': [{
                 u'AddressCode': 1,
@@ -191,7 +205,17 @@ class GetTaxRequestTest(unittest.TestCase):
                     u'OriginCode': 1,
                     u'Qty': 5,
                     u'TaxCode': u'42'
-            }]}
+                },
+                    {
+                        u'Description': u'and another',
+                        u'DestinationCode': 2,
+                        u'ItemCode': u'1258',
+                        u'LineNo': 3,
+                        u'OriginCode': 1,
+                        u'Qty': 5,
+                        u'TaxCode': u'NT'
+                    }
+            ]}
         self.assertEqual(line_items_request_body, ava.request_body)
 
     def test_order_line_tax_override(self):

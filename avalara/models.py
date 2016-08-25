@@ -7,9 +7,7 @@ import six
 from serpy import Serializer
 
 from . import serializers
-
-
-DEFAULT_TAX_CODE = 'P0000000'
+from .constants import DEFAULT_TAX_CODE, NON_TAXABLE_TAX_CODE
 
 
 def strip_if_text(value):
@@ -120,6 +118,8 @@ class OrderLine(BaseAvalaraModel):
         self._validate_required()
         if kwargs.get('price') and not self.amount:
             self._set_amount()
+        if not self.amount:
+            self.tax_code = NON_TAXABLE_TAX_CODE
 
     def _set_amount(self):
         """
