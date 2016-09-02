@@ -75,6 +75,11 @@ OVERRIDE_LOOKUP_2 = {
     'tax_amount': 12.00,
 }
 
+OVERRIDE_LOOKUP_3 = {
+    'tax_amount': 0,
+}
+
+
 
 class GetTaxRequestTest(unittest.TestCase):
     maxDiff = None
@@ -231,6 +236,8 @@ class GetTaxRequestTest(unittest.TestCase):
         line_lookup_2['destination_code'] = destination_code
         line_lookup_2['origin_code'] = origin_code
         ava.add_line(override_lookup=OVERRIDE_LOOKUP_2, **line_lookup_2)
+        # test no tax override
+        ava.add_line(override_lookup=OVERRIDE_LOOKUP_3, **line_lookup_2)
         request_body = {
             u'Addresses': [{
                 u'AddressCode': 1,
@@ -285,7 +292,21 @@ class GetTaxRequestTest(unittest.TestCase):
                         u'TaxAmount': '12.00',
                         u'TaxDate': str(datetime.date.today()),
                         u'TaxOverrideType': u'TaxAmount'
-                    }
-                }]}
+                    }},
+                    {
+                        u'Amount': '75.00',
+                        u'Description': u'some other description',
+                        u'DestinationCode': 2,
+                        u'ItemCode': u'1245',
+                        u'LineNo': 3,
+                        u'OriginCode': 1,
+                        u'Qty': 5,
+                        u'TaxCode': u'NT',
+                        u'TaxOverride': {
+                            u'Reason': u'Imported From External System',
+                            u'TaxDate': str(datetime.date.today()),
+                            u'TaxOverrideType': u'TaxAmount'
+                        }},
+                ]}
         self.assertEqual(request_body, ava.request_body)
 

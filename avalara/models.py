@@ -131,6 +131,8 @@ class OrderLine(BaseAvalaraModel):
     def _override(self, **kwargs):
         override = TaxOverride(**kwargs)
         self.tax_override = override
+        if not override.tax_amount:
+            self.tax_code = NON_TAXABLE_TAX_CODE
 
 
 class Address(BaseAvalaraModel):
