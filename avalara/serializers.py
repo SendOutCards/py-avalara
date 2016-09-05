@@ -9,7 +9,7 @@ from serpy import BoolField, Field, IntField, Serializer
 
 def get_decimal_value(value):
     if value:
-        return str(Decimal(value).quantize(Decimal('.01'), rounding=ROUND_HALF_UP))
+        return str(Decimal(value).quantize(Decimal('.0001'), rounding=ROUND_HALF_UP))
 
 
 def get_date_value(value):
