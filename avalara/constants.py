@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 DEFAULT_TAX_CODE = 'P0000000'
 HANDLING_TAX_CODE = 'OH010000'
-NON_TAXABLE_TAX_CODE = 'NT'
+NON_TAXABLE_TAX_CODE = 'ON030000'
 SHIPPING_TAX_CODE = 'FR020100'
 
 ## TODO we have to get item codes for these

@@ -37,7 +37,7 @@ LINE_LOOKUP_2 = {
 }
 
 LINE_LOOKUP_3 = {
-    # line with 0 amount to test non taxable (NT) code
+    # line with 0 amount to test non taxable code
     'item_code': '1258',
     'tax_code': '42',
     'qty': 5,
@@ -192,7 +192,7 @@ class GetTaxRequestTest(unittest.TestCase):
             u'DocCode': u'5',
             u'DocDate': '2016-05-05',
             u'Lines': [{
-                u'Amount': '350.37',
+                u'Amount': '350.3700',
                 u'Description': u'some description',
                 u'DestinationCode': 2,
                 u'ItemCode': u'12345',
@@ -202,7 +202,7 @@ class GetTaxRequestTest(unittest.TestCase):
                 u'TaxCode': u'P0000000'
             },
                 {
-                    u'Amount': '75.00',
+                    u'Amount': '75.0000',
                     u'Description': u'some other description',
                     u'DestinationCode': 2,
                     u'ItemCode': u'1245',
@@ -218,7 +218,7 @@ class GetTaxRequestTest(unittest.TestCase):
                         u'LineNo': 3,
                         u'OriginCode': 1,
                         u'Qty': 5,
-                        u'TaxCode': u'NT'
+                        u'TaxCode': u'ON030000'
                     }
             ]}
         self.assertEqual(line_items_request_body, ava.request_body)
@@ -264,7 +264,7 @@ class GetTaxRequestTest(unittest.TestCase):
             u'DocCode': u'5',
             u'DocDate': '2016-05-05',
             u'Lines': [{
-                u'Amount': '350.37',
+                u'Amount': '350.3700',
                 u'Description': u'some description',
                 u'DestinationCode': 2,
                 u'ItemCode': u'12345',
@@ -274,12 +274,12 @@ class GetTaxRequestTest(unittest.TestCase):
                 u'TaxCode': u'P0000000',
                 u'TaxOverride': {
                     u'Reason': u'Imported From External System',
-                    u'TaxAmount': '15.37',
+                    u'TaxAmount': '15.3700',
                     u'TaxDate': '2016-05-05',
                     u'TaxOverrideType': u'TaxAmount'
                 }},
                 {
-                    u'Amount': '75.00',
+                    u'Amount': '75.0000',
                     u'Description': u'some other description',
                     u'DestinationCode': 2,
                     u'ItemCode': u'1245',
@@ -289,19 +289,19 @@ class GetTaxRequestTest(unittest.TestCase):
                     u'TaxCode': u'42',
                     u'TaxOverride': {
                         u'Reason': u'Imported From External System',
-                        u'TaxAmount': '12.00',
+                        u'TaxAmount': '12.0000',
                         u'TaxDate': str(datetime.date.today()),
                         u'TaxOverrideType': u'TaxAmount'
                     }},
                     {
-                        u'Amount': '75.00',
+                        u'Amount': '75.0000',
                         u'Description': u'some other description',
                         u'DestinationCode': 2,
                         u'ItemCode': u'1245',
                         u'LineNo': 3,
                         u'OriginCode': 1,
                         u'Qty': 5,
-                        u'TaxCode': u'NT',
+                        u'TaxCode': u'ON030000',
                         u'TaxOverride': {
                             u'Reason': u'Imported From External System',
                             u'TaxDate': str(datetime.date.today()),
