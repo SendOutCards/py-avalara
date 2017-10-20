@@ -6,7 +6,7 @@ import sys
 
 requirements = [
     "requests",
-    "serpy",
+    "serpy==0.1.1",
     "six",
 ]
 
