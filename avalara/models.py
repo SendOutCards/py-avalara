@@ -7,6 +7,7 @@ import six
 from serpy import Serializer
 
 from . import serializers
+from .client import Avalara
 from .constants import DEFAULT_TAX_CODE, NON_TAXABLE_TAX_CODE
 
 
@@ -54,6 +55,7 @@ class BaseAvalaraModel(object):
         # set all attributes passed in through kwargs.  These should all
         # match the names of the fields of the appropriate serializer
         self.__dict__.update(remove_nulls_from_dict(cleaner_kwargs))
+        self.client = Avalara()
 
     @property
     def _get_fields(self):
@@ -194,3 +196,12 @@ class GetTaxRequest(BaseAvalaraModel):
             line._override(**override_lookup)
         self.olines.append(line)
 
+    def save(self, commit=False):
+        """
+        pass in a GetTaxRequest object from the models module
+        """
+        doc_type = 'SalesInvoice' if commit else 'SalesOrder'
+        self.doc_type = doc_type
+        self.commit = commit
+        url = self.client._build_url('tax/get')
+        return self.client._make_request('post', url, json=self.request_body)

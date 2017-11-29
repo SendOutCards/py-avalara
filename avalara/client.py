@@ -59,10 +59,6 @@ class Avalara(object):
                               latitude=latitude, longitude=longitude, saleamount=sale_amount)
         return self._make_request('get', url)
 
-    def _get_tax(self, request_body):
-        url = self._build_url('tax/get')
-        return self._make_request('post', url, json=request_body)
-
     def void_document(self, doc_code, doc_type='SalesInvoice', company_code='SOC', cancel_code='DocVoided'):
         cancel_tax_request = {
             'CancelCode': cancel_code,
@@ -72,20 +68,3 @@ class Avalara(object):
         }
         url = self._build_url('tax/cancel')
         return self._make_request('post', url, json=cancel_tax_request)
-
-    def get_tax(self, gtr):
-        """
-        pass in a GetTaxRequest object from the models module
-        """
-        gtr.doc_type = 'SalesOrder'
-        gtr.commit = False
-        return self._get_tax(gtr.request_body)
-
-    def commit_tax(self, gtr):
-        """
-        pass in a GetTaxRequest object from the models module
-        """
-        gtr.doc_type = 'SalesInvoice'
-        gtr.commit = True
-        return self._get_tax(gtr.request_body)
-
